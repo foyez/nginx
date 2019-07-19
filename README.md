@@ -52,10 +52,15 @@ $ reboot # rebooting server
 2 main configuration terms
 1. Context
 2. Directive
-Directive consist of:
-`server_name mydomain.com;`
 
-### Creating a Virtual Host
+* Example:
+```nginx
+server { # context
+  listen 80; # directive - server_name mydomain.com;
+}
+```
+
+## Creating a Virtual Host
 
 ```bash
 $ ls -l /sites/demo # keeping files in this directory
@@ -64,4 +69,47 @@ $ systemctl reload nginx # reload command over the restart command to prevent an
 $ systemctl restart nginx # first stop nginx and then if new configuration contain any errors refuse to start back
 $ nginx -t # verify nginx
 $ curl -I http://127.0.0.1/style.css # check mime type
+```
+
+## Location Blocks
+
+Priority
+1. Exact Match = URI
+2. Preferential Prefix Match ^~ URI
+3. REGEX Match ~* URI
+4. Prefix Match URI
+
+```nginx
+server {
+  location URI {
+    ...handle response
+  }
+}
+
+# Prefix match
+location /greet {
+  return 200 'Hello from NGINX "/greet" location.';
+}
+
+# Exact match
+location = /greet {
+  return 200 'Hello from NGINX "/greet" location. - Exact Match';
+}
+
+# REGEX has higher priority than prefix match
+# REGEX match - case sensitive
+location ~ /greet[0-9] {
+  return 200 'Hello from NGINX "/greet" location. - REGEX Match';
+}
+
+# REGEX match - case insensitive
+location ~* /greet[0-9] {
+  return 200 'Hello from NGINX "/greet" location. - REGEX Match';
+}
+
+# Preferential Prefix > REGEX
+# Preferential Prefix match
+location ^~ /greet {
+  return 200 'Hello from NGINX "/greet" location.';
+}
 ```
