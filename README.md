@@ -113,3 +113,22 @@ location ^~ /greet {
   return 200 'Hello from NGINX "/greet" location.';
 }
 ```
+
+## Variables
+1. Configuration Variables
+`set $var 'something';`
+2. NGINX Module Variables
+`$http, $uri, $args`
+
+```nginx
+set $weekend 'NO';
+
+# Check if weekend
+if($date_local ~ 'Saturday|Sunday') {
+  set $weekend 'YES';
+}
+
+location /is_weekend {
+  return 200 $weekend;
+}
+```
